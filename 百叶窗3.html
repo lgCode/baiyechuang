@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>百叶窗3</title>
+	<style type="text/css">
+		*{
+			margin:0;
+			padding:0;
+		}
+		#warp{
+			width:700px;height:400px;
+			margin:0 auto;
+			padding:100px;
+		}
+		.box{
+			width:500px;height:300px;
+			margin:50px auto;
+			position: relative;
+			overflow: hidden;
+		}
+		img{
+			width:400px;height:300px;
+			display: block;
+			position: absolute;top:0;left:0;
+		}
+
+		img:nth-of-type(1){
+			left:0;
+		}	
+		img:nth-of-type(2){
+			left:100px;
+		}
+		img:nth-of-type(3){
+			left:200px;
+		}
+		img:nth-of-type(4){
+			left:300px;
+		}
+		img:nth-of-type(5){
+			left:400px;
+		}
+
+	</style>
+</head>
+<body>
+	<div id="warp">
+		<div class="box">
+			
+		</div>
+	</div>
+	<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.js"></script>
+	
+	<script type="text/javascript">
+		function WindowShade(){
+			this.warp = $('#warp');
+			this.box  = $('.box');
+			this.init();
+		}
+		WindowShade.prototype = {
+			init:function(){
+				var _this = this;
+				_this.createImg();
+			},
+			createImg:function(){
+				var _this = this,
+				_urls = configUrl.urls,
+				_len  = _urls.length;
+				for (var i = 0; i < _len; i++) {
+					$('<img/>')
+					.attr('src',_urls[i])
+					.on({
+						'mouseover':function(){
+							var _imgSrc = $(this);
+							var _imgUrl = _imgSrc.attr('src');
+							_this.eventMouseMove( _imgSrc );
+							_this.bgImg( _imgUrl );
+						},
+						'mouseout':function(){
+							var _imgs = $('img');
+							_this.eventMouseOut( _imgs );
+						}
+					})
+					.appendTo( _this.box );
+				};
+			},
+			eventMouseMove:function( _imgSrc ){
+			// console.log( _imgSrc );
+			var _this = this,
+			_idx  = _imgSrc.index(),
+			_imgL = _imgSrc.prevAll(),
+			_imgR = _imgSrc.nextAll();
+				// console.log(_imgL + ',' + _imgR);
+				_this.imgAnimate( _imgSrc, _idx);
+
+				_this.eventLeftMove( _imgL );
+				_this.eventRightMove( _imgR );
+			},
+			eventLeftMove:function( _imgL ){
+				var _this = this;
+				_imgL.each(function(){
+					var _img = $(this);
+					var _idx = _img.index();
+					_this.imgAnimate( _img, _idx);
+				})
+			},
+			eventRightMove:function( _imgR ){
+				var _this = this;
+				_imgR.each(function(){
+					var _img = $(this);
+					var _idx = _img.index();
+					_this.imgAnimate( _img, _idx + 15);
+				})
+			},
+			imgAnimate:function( _img, _idx){
+				var _this= this;
+				_img.stop().animate({
+					'left': _idx * 25
+			},1000);//直接移动到left值处，而不是移动多少
+			},
+			eventMouseOut:function( _imgs ){
+				var _this = this;
+				_imgs.each(function(){
+					var _img = $(this);
+					var _idx = _img.index();
+					_img.stop().animate({
+						'left': _idx*100
+					},1000);
+				});
+			},
+			bgImg:function( _imgSrc ){
+				var _this = this;
+				_this.warp.css({
+					'background-image':'url('+ _imgSrc +')'
+				});
+			}
+
+		}
+
+
+		var configUrl = {
+			urls:[
+			'1.jpg',
+			'2.jpg',
+			'3.jpg',
+			'4.jpg',
+			'5.jpg'
+			]
+		};
+
+		new WindowShade();
+	</script>
+</body>
+</html>
